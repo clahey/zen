@@ -2,7 +2,6 @@
 #define OBJECT_HH
 
 #include "ZenMatrix.hh"
-#include <random>
 
 #define RANDOM 0.01
 #define DAMPEN 0.9
@@ -10,15 +9,12 @@
 #define FRICTION 1.0
 #define FRICTION_LIMIT 0.05
 
-static int sWhichRand = 0;
-
 template<class F>
 class Object
 {
 public:
 
-  Object() :
-    mRand(std::mt19937(time(NULL) * (++sWhichRand)), std::uniform_real<>(-RANDOM, RANDOM))
+  Object()
   {
     mMass = 1;
     mRadius = 1;
@@ -68,11 +64,7 @@ public:
 
   void RandomizeAngularVelocity(F timeslice)
   {
-    ZenMatrix<F, 3, 1> random;
-    random(0, 0) = mRand() * timeslice;
-    random(1, 0) = mRand() * timeslice;
-    random(2, 0) = mRand() * timeslice;
-    mAngularVelocity += random;
+    mAngularVelocity += ZenMatrix<F, 3, 1>::GetRandom(RANDOM * timeslice);
   }
 
   void Interact(Object<F>* other, F timeslice)
@@ -90,8 +82,6 @@ public:
 
 protected:
   virtual void InteractMagnetically(Object<F>* other, F timeslice) {}
-
-  std::variate_generator<std::mt19937, std::uniform_real<> > mRand;
 };
 
 template<class F>

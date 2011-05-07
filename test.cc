@@ -1,6 +1,8 @@
 #include "Scene.hh"
 #include "Magnet.hh"
 #include "Renderable.hh"
+#include "Conversions.hh"
+#include "Random.hh"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -28,17 +30,20 @@ public:
 
 int main(int argc, char* argv[])
 {
-  double location = 0;
+  ZenMatrix<double, 3, 1> negcenter;
+  negcenter(1, 0) = -sqrt(3.0L) / 2 * 0.005;
   Scene<double> scene;
-  for (int i = 0; i < 2; i++) {
+  for (int i = 0; i < 6; i++) {
     MyMagnet* m = new MyMagnet(0.07, .0005, 0.005);
-    m->mLocation(0, 0) = location;
     ZenMatrix<double, 3, 1> z;
     z(2, 0) = 1;
-    // Intentionally not quite pi/2.
-    m->mOrientation = Rotate(m->mOrientation, z, 1.57);
+    m->mLocation = Rotate(negcenter, z, Degrees2Radians(60 * i + 30)) - negcenter;
+    m->mOrientation = ZenMatrix<double, 3, 1>::GetRandom(1);
+    m->mOrientation = Normalize(m->mOrientation);
+//    // Intentionally not quite pi/2.
+//    m->mOrientation = Rotate(m->mOrientation, z, 1.57);
     scene.AddObject(m);
-    location += 0.005;
+    //    location += 0.005;
   }
   //  MyMagnet* m = new MyMagnet(1);
   //  m->mLocation(1, 0) = 0.005;

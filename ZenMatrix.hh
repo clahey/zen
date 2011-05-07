@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <iostream>
+#include "Random.hh"
 
 template<class F, int R, int C>
 class ZenMatrix
@@ -127,6 +128,19 @@ public:
     for (int r = 0; r < R; r++) {
       for (int c = 0; c < C; c++) {
 	retval(c, r) = operator()(r, c);
+      }
+    }
+    return retval;
+  }
+
+  static ZenMatrix<F, R, C> GetRandom (F multiplier = 1.0) {
+    ZenMatrix<F, R, C> retval;
+  std::variate_generator<std::mt19937, std::uniform_real<> >& generator =
+    Random::GetGenerator();
+
+    for (int r = 0; r < R; r++) {
+      for (int c = 0; c < C; c++) {
+	retval(r, c) = generator() * multiplier;
       }
     }
     return retval;

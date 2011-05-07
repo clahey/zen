@@ -26,8 +26,8 @@ protected:
     } else {
       F yrotation = asin(-z);
       F zrotation = asin(-(y / sqrt((1 - z * z))));
-      out << "rotate y * " << (int) (yrotation * 360 / 2 / mPI) << std::endl;
-      out << "rotate z * " << (int) (zrotation * 360 / 2 / mPI) << std::endl;
+      out << "rotate y * " << (yrotation * 360 / 2 / mPI) << std::endl;
+      out << "rotate z * " << (zrotation * 360 / 2 / mPI) << std::endl;
     }
     out << "translate <" << Object<F>::mLocation(0, 0);
     out << ", " << Object<F>::mLocation(1, 0);
