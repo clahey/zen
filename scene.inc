@@ -1,13 +1,15 @@
 #include "colors.inc"
+global_settings { max_trace_level 256 }
 #declare Magnet = sphere {
-    <0, 0, 0> .5
+    <0, 0, 0> .97
     pigment {
 	gradient x
 	color_map {
 	    [ 0.5 Blue ]
 	    [ 0.5 White ]
 	}
-	translate -0.5 * x
+	scale 2
+	translate -1 * x
     }
     finish {
 	phong 0.9
@@ -17,12 +19,13 @@
 	    .2
 	    metallic .5
 	}
+	ambient .3
     }
 }
 
 camera {
-    location <.001, .01, -.01>
-    look_at  <.0025, 0,  0>
+    location <.001, .014, -.014>
+    look_at  <0, 0.005,  0>
 }
 
 light_source { <2, 4, -3> color White}

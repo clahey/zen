@@ -12,27 +12,35 @@ class Magnet :
 {
 public:
   Magnet(F strength)
-    : mStrength(strength)
-  {}
+    : mStrength(strength),
+      mOrientationValid(false)
+  {
+  }
 
   void ApplyMagneticField(const ZenMatrix<F, 3, 1>& field, F timeslice)
   {
     //    ApplyTorque(Cross(Object<F>::mOrientation * mStrength, field), timeslice );
     // Optimize
-    ApplyTorque(Cross(Object<F>::mOrientation, field), timeslice * mStrength);
+    ApplyTorque(Cross(GetOrientation(), field), timeslice * mStrength);
+  }
+
+  virtual void ApplyAngularVelocity(F timeslice)
+  {
+    Object<F>::ApplyAngularVelocity(timeslice);
+    mOrientationValid = false;
   }
 
   ZenMatrix<F, 3, 1> GetMagneticField(const ZenMatrix<F, 3, 1>& location)
   {
     ZenMatrix<F, 3, 1> r = location - Object<F>::mLocation;
     F distance = Length(r);
-    return (r * (3 * Dot(Object<F>::mOrientation, r) / pow(distance, 5.0)) - Object<F>::mOrientation / pow(distance, 3.0))
+    return (r * (3 * Dot(GetOrientation(), r) / pow(distance, 5.0)) - GetOrientation() / pow(distance, 3.0))
       * mStrength * (muNaughtOverPi / 4.0);
     // Optimize
 //    ZenMatrix<F, 3, 1> retval;
 //    retval = r;
-//    retval *= (3 * Dot(Object<F>::mOrientation, r) / pow(distance, 2.0));
-//    retval -= Object<F>::mOrientation;
+//    retval *= (3 * Dot(GetOrientation(), r) / pow(distance, 2.0));
+//    retval -= GetOrientation();
 //    retval /= pow(distance, 3.0);
 //    return retval;
   }
@@ -48,7 +56,17 @@ protected:
   }
 
 private:
+  const ZenMatrix<F, 3, 1>& GetOrientation() {
+    if (!mOrientationValid) {
+      ZenMatrix<F, 3, 1> x;
+      x(0, 0) = 1;
+      mOrientation = Object<F>::mRotation.Rotate(x);
+    }
+    return mOrientation;
+  }
   F mStrength;
+  ZenMatrix<F, 3, 1> mOrientation;
+  bool mOrientationValid;
 };
 
 #endif // MAGNET_HH

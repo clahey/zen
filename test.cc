@@ -31,27 +31,22 @@ public:
 int main(int argc, char* argv[])
 {
   ZenMatrix<double, 3, 1> negcenter;
-  negcenter(1, 0) = -sqrt(3.0L) / 2 * 0.005;
+  negcenter(1, 0) = -0.005;
   Scene<double> scene;
   for (int i = 0; i < 6; i++) {
-    MyMagnet* m = new MyMagnet(0.07, .0005, 0.005);
+    MyMagnet* m = new MyMagnet(0.07, .0005, 0.0025);
     ZenMatrix<double, 3, 1> z;
     z(2, 0) = 1;
     m->mLocation = Rotate(negcenter, z, Degrees2Radians(60 * i + 30)) - negcenter;
-    m->mOrientation = ZenMatrix<double, 3, 1>::GetRandom(1);
-    m->mOrientation = Normalize(m->mOrientation);
-//    // Intentionally not quite pi/2.
-//    m->mOrientation = Rotate(m->mOrientation, z, 1.57);
+    std::variate_generator<std::mt19937, std::uniform_real<> >& generator = Random::GetGenerator();
+    //    ZenMatrix<double, 3, 1> axis = Normalize(ZenMatrix<double, 3, 1>::GetRandom());
+    //    double angle = generator() * 4 * asin(1.0);
+    m->mRotation = Quaternion<double>(generator(), generator(), generator(), generator()).Normalize();
+    //    cout << m->mRotation << endl;
     scene.AddObject(m);
-    //    location += 0.005;
   }
-  //  MyMagnet* m = new MyMagnet(1);
-  //  m->mLocation(1, 0) = 0.005;
-  //  scene.AddObject(m);
 
-  //  cout << scene << endl;
   for (int i = 0; i < 10001; i++) {
-    scene.Step(0.00001);
     if (! (i % OUTPUT_SKIP)) {
       char filename[30];
       sprintf(filename, "magnets-%04d.pov", i / OUTPUT_SKIP);
@@ -59,5 +54,6 @@ int main(int argc, char* argv[])
       out << "#include \"scene.inc\"" << endl;
       scene.Render(out);
     }
+    scene.Step(0.00001);
   }
 }

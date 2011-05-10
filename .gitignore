@@ -1,0 +1,8 @@
+*~
+*.o
+magnets
+test
+magnets.mov
+*.png
+*.pov
+.sconsign.dblite

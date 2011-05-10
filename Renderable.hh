@@ -11,6 +11,7 @@ public:
 protected:
   void OutputPosition(std::ostream& out)
   {
+#if 0
     if (mPI == 0) {
       mPI = 4*atan(1);
     }
@@ -29,10 +30,21 @@ protected:
       out << "rotate y * " << (yrotation * 360 / 2 / mPI) << std::endl;
       out << "rotate z * " << (zrotation * 360 / 2 / mPI) << std::endl;
     }
-    out << "translate <" << Object<F>::mLocation(0, 0);
-    out << ", " << Object<F>::mLocation(1, 0);
-    out << ", " << -Object<F>::mLocation(2, 0);
-    out << ">" << std::endl;
+#endif
+    out << "matrix <";
+    ZenMatrix<F, 3, 3> matrix = Object<F>::mRotation.GetRotationMatrix();
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+	//	if ((i == 2 || j == 2) && i != j) {
+	//	  out << -(matrix(i, j) * Object<F>::mRadius) << ", ";
+	//	} else {
+	  out << (matrix(j, i) * Object<F>::mRadius) << ", "; 
+	  //	}
+      }
+    }
+    out << Object<F>::mLocation(0, 0) << ", ";
+    out << Object<F>::mLocation(1, 0) << ", ";
+    out << Object<F>::mLocation(2, 0) << ">" << std::endl;
   }
 private:
   F mPI;

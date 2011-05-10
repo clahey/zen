@@ -54,6 +54,16 @@ public:
     return retval;
   }
 
+  ZenMatrix<F, R, C> operator- () const {
+    ZenMatrix<F, R, C> retval;
+    for (int r = 0; r < R; r++) {
+      for (int c = 0; c < C; c++) {
+	retval(r, c) = -operator()(r, c);
+      }
+    }
+    return retval;
+  }
+
   ZenMatrix<F, R, C> operator* (const F& s) const {
     ZenMatrix<F, R, C> retval;
     for (int r = 0; r < R; r++) {

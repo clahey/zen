@@ -2,6 +2,7 @@
 #define OBJECT_HH
 
 #include "ZenMatrix.hh"
+#include "Quaternion.hh"
 
 #define RANDOM 0.01
 #define DAMPEN 0.9
@@ -19,7 +20,7 @@ public:
     mMass = 1;
     mRadius = 1;
     mMomentOfInertia = 1;
-    mOrientation(0, 0) = 1;
+    mRotation = 1;
   }
 
   void SetSize(F mass, F radius)
@@ -29,15 +30,16 @@ public:
     mMomentOfInertia = mMass * mRadius * mRadius * 2.0 / 5.0;
   }
 
-  void ApplyAngularVelocity(F timeslice)
+  virtual void ApplyAngularVelocity(F timeslice)
   {
-    mOrientation = Rotate(mOrientation, mAngularVelocity * timeslice);
+    F length = Length(mAngularVelocity);
+    mRotation = Quaternion<F>(mAngularVelocity / length, length * timeslice) * mRotation;
   }
 
   void ApplyVelocity(F timeslice)
   {
     mLocation += mVelocity * timeslice;
-  }  
+  }
 
   void ApplyForce(ZenMatrix<F, 3, 1> force, F timeslice)
   {
@@ -74,7 +76,7 @@ public:
 
   ZenMatrix<F, 3, 1> mLocation;
   ZenMatrix<F, 3, 1> mVelocity;
-  ZenMatrix<F, 3, 1> mOrientation;
+  Quaternion<F> mRotation;
   ZenMatrix<F, 3, 1> mAngularVelocity;
   F mMass;
   F mMomentOfInertia;
@@ -87,7 +89,7 @@ protected:
 template<class F>
 std::ostream& operator<<(std::ostream& out, const Object<F>& object)
 {
-  return out << "( " << object.mLocation << " " << object.mOrientation << " )";
+  return out << "( " << object.mLocation << " " << object.mRotation << " )";
 }
 
 #endif // OBJECT_HH
