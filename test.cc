@@ -14,10 +14,10 @@ class MyMagnet:
   public Renderable<double>
 {
 public:
-  MyMagnet(double strength, double mass, double radius)
-    : Magnet<double>(strength)
+  MyMagnet()
+    : Magnet<double>(0.07)
   {
-    SetSize(mass, radius);
+    SetSize(.0005, 0.0025);
   }
 
   void Render(std::ostream& out)
@@ -33,17 +33,20 @@ int main(int argc, char* argv[])
   ZenMatrix<double, 3, 1> negcenter;
   negcenter(1, 0) = -0.005;
   Scene<double> scene;
-  for (int i = 0; i < 6; i++) {
-    MyMagnet* m = new MyMagnet(0.07, .0005, 0.0025);
-    ZenMatrix<double, 3, 1> z;
-    z(2, 0) = 1;
-    m->mLocation = Rotate(negcenter, z, Degrees2Radians(60 * i + 30)) - negcenter;
-    std::variate_generator<std::mt19937, std::uniform_real<> >& generator = Random::GetGenerator();
-    //    ZenMatrix<double, 3, 1> axis = Normalize(ZenMatrix<double, 3, 1>::GetRandom());
-    //    double angle = generator() * 4 * asin(1.0);
-    m->mRotation = Quaternion<double>(generator(), generator(), generator(), generator()).Normalize();
-    //    cout << m->mRotation << endl;
-    scene.AddObject(m);
+  std::variate_generator<std::mt19937, std::uniform_real<> >& generator = Random::GetGenerator();
+
+  // small cube
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      for (int k = 0; k < 3; k++) {
+	MyMagnet* m = new MyMagnet();
+	m->mLocation(0, 0) = i * m->mRadius * 2;
+	m->mLocation(1, 0) = j * m->mRadius * 2;
+	m->mLocation(2, 0) = k * m->mRadius * 2;
+	m->mRotation = Quaternion<double>(generator(), generator(), generator(), generator()).Normalize();
+	scene.AddObject(m);
+      }
+    }
   }
 
   for (int i = 0; i < 10001; i++) {

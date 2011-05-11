@@ -2,7 +2,7 @@
 *.o
 magnets
 test
-magnets.mov
+*.mov
 *.png
 *.pov
 .sconsign.dblite

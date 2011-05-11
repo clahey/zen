@@ -5,8 +5,8 @@ global_settings { max_trace_level 256 }
     pigment {
 	gradient x
 	color_map {
-	    [ 0.5 Blue ]
-	    [ 0.5 White ]
+	    [ 0.5 Blue transmit .1 ]
+	    [ 0.5 White transmit .1 ]
 	}
 	scale 2
 	translate -1 * x
@@ -21,11 +21,12 @@ global_settings { max_trace_level 256 }
 	}
 	ambient .3
     }
+    interior{ior 1.5}
 }
 
 camera {
-    location <.001, .014, -.014>
-    look_at  <0, 0.005,  0>
+    location <.007, .016, -.016>
+    look_at  <0.005, 0.005,  0.005>
 }
 
 light_source { <2, 4, -3> color White}
