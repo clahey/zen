@@ -72,6 +72,7 @@ public:
   void Interact(Object<F>* other, F timeslice)
   {
     InteractMagnetically(other, timeslice);
+    InteractPhysically(other, timeslice);
   }
 
   ZenMatrix<F, 3, 1> mLocation;
@@ -84,6 +85,7 @@ public:
 
 protected:
   virtual void InteractMagnetically(Object<F>* other, F timeslice) {}
+  virtual void InteractPhysically(Object<F>* other, F timeslice) {}
 };
 
 template<class F>

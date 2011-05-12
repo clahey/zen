@@ -1,21 +1,25 @@
-#include "Scene.hh"
-#include "Magnet.hh"
-#include "Renderable.hh"
+#include "Sphere.hh"
 #include "Conversions.hh"
+#include "Magnet.hh"
 #include "Random.hh"
+#include "Renderable.hh"
+#include "Scene.hh"
 #include <iostream>
 #include <fstream>
 using namespace std;
 
 const int OUTPUT_SKIP = 25;
+const int SLOWDOWN = 400;
 
 class MyMagnet:
   public Magnet<double>,
-  public Renderable<double>
+  public Renderable<double>,
+  public Sphere<double>
 {
 public:
   MyMagnet()
-    : Magnet<double>(0.07)
+    : Magnet<double>(0.07),
+      Sphere<double>(100000)
   {
     SetSize(.0005, 0.0025);
   }
@@ -49,7 +53,7 @@ int main(int argc, char* argv[])
     }
   }
 
-  for (int i = 0; i < 10001; i++) {
+  for (int i = 0; i < 400 * OUTPUT_SKIP + 1; i++) {
     if (! (i % OUTPUT_SKIP)) {
       char filename[30];
       sprintf(filename, "magnets-%04d.pov", i / OUTPUT_SKIP);
@@ -57,6 +61,6 @@ int main(int argc, char* argv[])
       out << "#include \"scene.inc\"" << endl;
       scene.Render(out);
     }
-    scene.Step(0.00001);
+    scene.Step(0.1 / SLOWDOWN / OUTPUT_SKIP);
   }
 }

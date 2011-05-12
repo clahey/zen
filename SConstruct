@@ -1,4 +1,4 @@
-env = Environment(CCFLAGS="-std=c++0x -Wall")
+env = Environment(CCFLAGS="-std=c++0x -Wall -g")
 t = env.Program(target='magnets', source=['test.cc', 'Random.cc'])
 Default(t)
 env.Append(LIBS="boost_unit_test_framework")
