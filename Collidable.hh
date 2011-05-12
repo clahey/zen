@@ -9,8 +9,9 @@ class Collidable:
   virtual public Object<F>
 {
 public:
-  Collidable(F springConstant)
-    : mSpringConstant(springConstant)
+  Collidable(F springConstant, F dampeningConstant)
+    : mSpringConstant(springConstant),
+      mDampeningConstant(dampeningConstant)
   {
   }
 
@@ -32,7 +33,10 @@ protected:
       }
       if (collides) {
 	F springConstant = (mSpringConstant + otherCollidable->mSpringConstant) / 2;
-	ZenMatrix<F, 3, 1> force = normal * (-overlap * springConstant);
+	F dampeningConstant = (mDampeningConstant + otherCollidable->mDampeningConstant) / 2;
+	ZenMatrix<F, 3, 1> force;
+	ZenMatrix<F, 3, 1> relVel = other->mVelocity - Object<F>::mVelocity;
+	force = normal * ((-overlap * springConstant) + Dot(normal, relVel) * dampeningConstant);
 	ApplyForce(force, timeslice);
 	other->ApplyForce(-force, timeslice);
       }
@@ -47,6 +51,7 @@ protected:
 
 private:
   F mSpringConstant;
+  F mDampeningConstant;
 };
 
 #endif // COLLIDABLE_HH

@@ -25,7 +25,7 @@ global_settings { max_trace_level 256 }
 }
 
 camera {
-    location <.007, .016, -.016>
+    location <.007, .03, -.03>
     look_at  <0.005, 0.005,  0.005>
 }
 

@@ -19,7 +19,7 @@ class MyMagnet:
 public:
   MyMagnet()
     : Magnet<double>(0.07),
-      Sphere<double>(100000)
+      Sphere<double>(100000, 5)
   {
     SetSize(.0005, 0.0025);
   }
@@ -40,13 +40,14 @@ int main(int argc, char* argv[])
   std::variate_generator<std::mt19937, std::uniform_real<> >& generator = Random::GetGenerator();
 
   // small cube
-  for (int i = 0; i < 3; i++) {
-    for (int j = 0; j < 3; j++) {
-      for (int k = 0; k < 3; k++) {
+  for (int i = 0; i < 2; i++) {
+    for (int j = 0; j < 1; j++) {
+      for (int k = 0; k < 1; k++) {
 	MyMagnet* m = new MyMagnet();
-	m->mLocation(0, 0) = i * m->mRadius * 2;
-	m->mLocation(1, 0) = j * m->mRadius * 2;
-	m->mLocation(2, 0) = k * m->mRadius * 2;
+	m->mLocation(0, 0) = ((i * 2) - 1) * m->mRadius * 4;
+	m->mLocation(1, 0) = i * m->mRadius * 3;
+	m->mLocation(2, 0) = 0;
+	m->mVelocity(0, 0) = -((i * 2) - 1) * m->mRadius * 1000;
 	m->mRotation = Quaternion<double>(generator(), generator(), generator(), generator()).Normalize();
 	scene.AddObject(m);
       }

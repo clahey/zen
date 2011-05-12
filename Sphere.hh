@@ -8,8 +8,8 @@ class Sphere:
   public Collidable<F>
 {
 public:
-  Sphere(F springConstant)
-    : Collidable<F>(springConstant)
+  Sphere(F springConstant, F dampeningConstant)
+    : Collidable<F>(springConstant, dampeningConstant)
   {
   }
 
