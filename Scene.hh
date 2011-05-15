@@ -21,8 +21,8 @@ public:
       for (; j != mObjects.end(); j++) {
 	(*i)->Interact(*j, timeslice);
       }
-      (*i)->DampenAngularVelocity(timeslice);
-      (*i)->RandomizeAngularVelocity(timeslice);
+      //      (*i)->DampenAngularVelocity(timeslice);
+      //      (*i)->RandomizeAngularVelocity(timeslice);
       (*i)->ApplyAngularVelocity(timeslice);
       (*i)->ApplyVelocity(timeslice);
     }

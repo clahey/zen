@@ -8,8 +8,13 @@
 #include <fstream>
 using namespace std;
 
-const int OUTPUT_SKIP = 25;
-const int SLOWDOWN = 400;
+const int STEP_RATE = 75000;
+const int SLOWDOWN = 1;
+const int LENGTH = 10;
+const int FRAME_RATE = 30;
+
+const double STEP_LENGTH = 1.0L / STEP_RATE;
+const double FRAME_LENGTH = 1.0L / FRAME_RATE / SLOWDOWN;
 
 class MyMagnet:
   public Magnet<double>,
@@ -19,7 +24,7 @@ class MyMagnet:
 public:
   MyMagnet()
     : Magnet<double>(0.07),
-      Sphere<double>(100000, 5)
+      Sphere<double>(100000, 1, .01)
   {
     SetSize(.0005, 0.0025);
   }
@@ -31,6 +36,16 @@ public:
     out << "}" << endl;
   }
 };
+
+template<class F>
+void output(Scene<F>& scene, int frame)
+{
+  char filename[30];
+  sprintf(filename, "magnets-%05d.pov", frame);
+  ofstream out(filename);
+  out << "#include \"scene.inc\"" << endl;
+  scene.Render(out);
+}
 
 int main(int argc, char* argv[])
 {
@@ -45,23 +60,27 @@ int main(int argc, char* argv[])
       for (int k = 0; k < 1; k++) {
 	MyMagnet* m = new MyMagnet();
 	m->mLocation(0, 0) = ((i * 2) - 1) * m->mRadius * 4;
-	m->mLocation(1, 0) = i * m->mRadius * 3;
+	m->mLocation(1, 0) = i * m->mRadius * .5;
 	m->mLocation(2, 0) = 0;
-	m->mVelocity(0, 0) = -((i * 2) - 1) * m->mRadius * 1000;
-	m->mRotation = Quaternion<double>(generator(), generator(), generator(), generator()).Normalize();
+	m->mVelocity(0, 0) = -((i * 2) - 1) * m->mRadius * 100;
+	m->mRotation = Quaternion<double>(generator(), generator() / 1000, generator() / 1000, generator()).Normalize();
+	//ZenMatrix<double, 3, 1> rotation;
+	//rotation(2, 0) = 1;
+	//m->mRotation = Quaternion<double>(rotation, asin(1));
 	scene.AddObject(m);
       }
     }
   }
 
-  for (int i = 0; i < 400 * OUTPUT_SKIP + 1; i++) {
-    if (! (i % OUTPUT_SKIP)) {
-      char filename[30];
-      sprintf(filename, "magnets-%04d.pov", i / OUTPUT_SKIP);
-      ofstream out(filename);
-      out << "#include \"scene.inc\"" << endl;
-      scene.Render(out);
+  double frameTime = 0;
+  int frame = 0;
+  output(scene, frame++);
+  while (frame < LENGTH * FRAME_RATE) {
+    if (frameTime > FRAME_LENGTH) {
+      output(scene, frame++);
+      frameTime = 0;
     }
-    scene.Step(0.1 / SLOWDOWN / OUTPUT_SKIP);
+    scene.Step(STEP_LENGTH);
+    frameTime += STEP_LENGTH;
   }
 }
