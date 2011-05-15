@@ -24,7 +24,7 @@ class MyMagnet:
 public:
   MyMagnet()
     : Magnet<double>(0.07),
-      Sphere<double>(100000, 1, .01)
+      Sphere<double>(100000, 1, .8)
   {
     SetSize(.0005, 0.0025);
   }

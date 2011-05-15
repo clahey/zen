@@ -3,16 +3,17 @@
 
 #include "Object.hh"
 #include <exception>
+#include <algorithm>
 
 template<class F>
 class Collidable:
   virtual public Object<F>
 {
 public:
-  Collidable(F springConstant, F dampeningConstant, F frictionMultiplier)
+  Collidable(F springConstant, F dampeningConstant, F coefficientOfFriction)
     : mSpringConstant(springConstant),
       mDampeningConstant(dampeningConstant),
-      mFrictionMultiplier(frictionMultiplier)
+      mCoefficientOfFriction(coefficientOfFriction)
   {
   }
 
@@ -35,15 +36,19 @@ protected:
       if (collides) {
 	F springConstant = (mSpringConstant + otherCollidable->mSpringConstant) / 2;
 	F dampeningConstant = (mDampeningConstant + otherCollidable->mDampeningConstant) / 2;
-	F frictionMultiplier = (mFrictionMultiplier + otherCollidable->mFrictionMultiplier) / 2;
+	F coefficientOfFriction = (mCoefficientOfFriction + otherCollidable->mCoefficientOfFriction) / 2;
 	ZenMatrix<F, 3, 1> force;
 	ZenMatrix<F, 3, 1> relVel = other->mVelocity - Object<F>::mVelocity;
 	ZenMatrix<F, 3, 1> normalVel = normal * Dot(normal, relVel);
 	ZenMatrix<F, 3, 1> tangentVel = relVel - normalVel;
 	tangentVel += Cross(other->mAngularVelocity, normal * -other->mRadius);
 	tangentVel -= Cross(Object<F>::mAngularVelocity, normal * Object<F>::mRadius);
-	ZenMatrix<F, 3, 1> tangentForce = tangentVel * frictionMultiplier;
-	force = normal * (-overlap * springConstant) + normalVel * dampeningConstant + tangentForce;
+	F springStrength = -overlap * springConstant;
+	F frictionStrength = coefficientOfFriction * -springStrength;
+	F stoppingStrength = Length(tangentVel) / timeslice / 2;
+	ZenMatrix<F, 3, 1> tangentForce = Normalize(tangentVel) * min(frictionStrength, stoppingStrength);
+	
+	force = normal * springStrength + normalVel * dampeningConstant + tangentForce;
 	ApplyForce(force, timeslice);
 	other->ApplyForce(-force, timeslice);
 	
@@ -62,7 +67,7 @@ protected:
 private:
   F mSpringConstant;
   F mDampeningConstant;
-  F mFrictionMultiplier;
+  F mCoefficientOfFriction;
 };
 
 #endif // COLLIDABLE_HH
