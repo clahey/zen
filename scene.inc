@@ -58,6 +58,7 @@ plane {
 	    .5
 	}
     }
+    no_shadow
 }
 
 camera {

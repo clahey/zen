@@ -38,7 +38,7 @@ protected:
 	F springConstant = (mSpringConstant + otherCollidable->mSpringConstant) / 2;
 	F dampeningConstant = (mDampeningConstant + otherCollidable->mDampeningConstant) / 2;
 	F coefficientOfFriction = sqrt(mCoefficientOfFriction * otherCollidable->mCoefficientOfFriction);
-	F rollingResistance = sqrt(mRollingResistance * otherCollidable->mRollingResistance);
+	//	F rollingResistance = sqrt(mRollingResistance * otherCollidable->mRollingResistance);
 	ZenMatrix<F, 3, 1> normalVel = normal * Dot(normal, Object<F>::mVelocity);
 	ZenMatrix<F, 3, 1> otherNormalVel = normal * Dot(normal, other->mVelocity);
 	ZenMatrix<F, 3, 1> relNormalVel = otherNormalVel - normalVel;
@@ -56,12 +56,12 @@ protected:
 	ApplyForce(force, timeslice);
 	other->ApplyForce(-force, timeslice);
 
-	F rollingStrength = rollingResistance * springStrength / Object<F>::mRadius;
-	F otherRollingStrength = rollingResistance * springStrength / other->mRadius;
-	F stoppingStrength = Length(tangentVel) / timeslice;
-	F otherStoppingStrength = Length(otherTangentVel) / timeslice;
-	ZenMatrix<F, 3, 1> rollingForce = Normalize(tangentVel) * -min(rollingStrength, stoppingStrength);
-	ZenMatrix<F, 3, 1> otherRollingForce = Normalize(otherTangentVel) * -min(otherRollingStrength, otherStoppingStrength);
+//	F rollingStrength = rollingResistance * springStrength / Object<F>::mRadius;
+//	F otherRollingStrength = rollingResistance * springStrength / other->mRadius;
+//	F stoppingStrength = Length(tangentVel) / timeslice;
+//	F otherStoppingStrength = Length(otherTangentVel) / timeslice;
+//	ZenMatrix<F, 3, 1> rollingForce = Normalize(tangentVel) * -min(rollingStrength, stoppingStrength);
+//	ZenMatrix<F, 3, 1> otherRollingForce = Normalize(otherTangentVel) * -min(otherRollingStrength, otherStoppingStrength);
 	ApplyTorque(Cross(location - Object<F>::mLocation, tangentForce), timeslice);
 	other->ApplyTorque(Cross(location - other->mLocation, -tangentForce), timeslice);
       }
