@@ -47,22 +47,22 @@ global_settings { max_trace_level 256 }
     interior{ior 1.5}
 }
 
+#declare Plane =
+plane {
+    <1, 0, 0>, 0
+    pigment {
+	checker color Red, color Black
+    }
+    finish {
+	reflection {
+	    .5
+	}
+    }
+}
+
 camera {
     location <.007, .03, -.03>
     look_at  <0.005, 0.005,  0.005>
 }
 
 light_source { <2, 4, -3> color White}
-
-//plane {
-//    <0, 1, 0>, -.01
-//    pigment {
-//	checker color Red, color Black
-//	scale 0.01
-//    }
-//    finish {
-//	reflection {
-//	    .5
-//	}
-//    }
-//}

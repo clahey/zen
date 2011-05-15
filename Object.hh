@@ -1,6 +1,7 @@
 #ifndef OBJECT_HH
 #define OBJECT_HH
 
+#include <exception>
 #include "ZenMatrix.hh"
 #include "Quaternion.hh"
 
@@ -16,11 +17,13 @@ class Object
 public:
 
   Object()
+    : mRotation(1),
+      mMass(1),
+      mMomentOfInertia(1),
+      mRadius(1),
+      mImmobile(false),
+      mOrientationValid(false)
   {
-    mMass = 1;
-    mRadius = 1;
-    mMomentOfInertia = 1;
-    mRotation = 1;
   }
 
   void SetSize(F mass, F radius)
@@ -32,27 +35,43 @@ public:
 
   virtual void ApplyAngularVelocity(F timeslice)
   {
+    if (mImmobile) {
+      return;
+    }
     F length = Length(mAngularVelocity);
     mRotation = Quaternion<F>(mAngularVelocity / length, length * timeslice) * mRotation;
+    mOrientationValid = false;
   }
 
   void ApplyVelocity(F timeslice)
   {
+    if (mImmobile) {
+      return;
+    }
     mLocation += mVelocity * timeslice;
   }
 
   void ApplyForce(ZenMatrix<F, 3, 1> force, F timeslice)
   {
+    if (mImmobile) {
+      return;
+    }
     mVelocity += force * (timeslice / mMass);
   }
 
   void ApplyTorque(ZenMatrix<F, 3, 1> torque, F timeslice)
   {
+    if (mImmobile) {
+      return;
+    }
     mAngularVelocity += torque * (timeslice / mMomentOfInertia);
   }
 
   void DampenAngularVelocity(F timeslice)
   {
+    if (mImmobile) {
+      return;
+    }
     mAngularVelocity *= pow(DAMPEN, timeslice / DAMPEN_SPEED);
 //    F angularSpeed = Length(mAngularVelocity);
 //    if (angularSpeed > FRICTION_LIMIT) {
@@ -66,6 +85,9 @@ public:
 
   void RandomizeAngularVelocity(F timeslice)
   {
+    if (mImmobile) {
+      return;
+    }
     mAngularVelocity += ZenMatrix<F, 3, 1>::GetRandom(RANDOM * timeslice);
   }
 
@@ -73,6 +95,13 @@ public:
   {
     InteractMagnetically(other, timeslice);
     InteractPhysically(other, timeslice);
+    try {
+      InteractGravitationally(other, timeslice);
+    } catch(...) {
+      try {
+	other->InteractGravitationally(this, timeslice);
+      } catch(...) {}
+    }
   }
 
   ZenMatrix<F, 3, 1> mLocation;
@@ -86,6 +115,25 @@ public:
 protected:
   virtual void InteractMagnetically(Object<F>* other, F timeslice) {}
   virtual void InteractPhysically(Object<F>* other, F timeslice) {}
+  virtual void InteractGravitationally(Object<F>* other, F timeslice)
+  {
+    throw std::exception();
+  }
+
+  const ZenMatrix<F, 3, 1>& GetOrientation() {
+    if (!mOrientationValid) {
+      ZenMatrix<F, 3, 1> x;
+      x(0, 0) = 1;
+      mOrientation = Object<F>::mRotation.Rotate(x);
+    }
+    return mOrientation;
+  }
+
+  bool mImmobile;
+
+private:
+  ZenMatrix<F, 3, 1> mOrientation;
+  bool mOrientationValid;
 };
 
 template<class F>
