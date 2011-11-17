@@ -23,7 +23,7 @@ protected:
     if (other->mMass == 0) {
       return;
     }
-    other->ApplyForce(Object<F>::GetOrientation() * (other->mMass * mGravitationalConstant), timeslice);
+    other->ApplyAcceleration(Object<F>::GetOrientation() * mGravitationalConstant, timeslice);
   }
 
 private:

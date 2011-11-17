@@ -24,13 +24,12 @@ protected:
       return false;
     } else if (otherSphere != NULL) {
       ZenMatrix<F, 3, 1> orientation = Object<F>::GetOrientation();
-      F offset = Dot(orientation, Object<F>::mLocation);
-      F sphereOffset = Dot(orientation, other->mLocation);
-      F overlapLocal = offset - sphereOffset + otherSphere->mRadius;
+      F offset = Dot(orientation, other->mLocation - Object<F>::mLocation);
+      F overlapLocal = otherSphere->mRadius - offset;
       if (overlapLocal > 0) {
 	overlap = overlapLocal;
 	normal = orientation;
-	location = other->mLocation - normal * (sphereOffset - offset);
+	location = other->mLocation - normal * offset;
 	return true;
       } else {
 	return false;

@@ -59,6 +59,14 @@ public:
     mVelocity += force * (timeslice / mMass);
   }
 
+  void ApplyAcceleration(ZenMatrix<F, 3, 1> acceleration, F timeslice)
+  {
+    if (mImmobile) {
+      return;
+    }
+    mVelocity += acceleration * timeslice;
+  }
+
   void ApplyTorque(ZenMatrix<F, 3, 1> torque, F timeslice)
   {
     if (mImmobile) {
@@ -124,7 +132,8 @@ protected:
     if (!mOrientationValid) {
       ZenMatrix<F, 3, 1> x;
       x(0, 0) = 1;
-      mOrientation = Object<F>::mRotation.Rotate(x);
+      mOrientation = mRotation.Rotate(x);
+      mOrientationValid = true;
     }
     return mOrientation;
   }

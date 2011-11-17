@@ -242,6 +242,19 @@ ZenMatrix<F, N, 1> ApplyAngularVelocity(const ZenMatrix<F, N, 1>& v,
   return Rotate (v, moment * (time / length), length);
 }
 
+/*
+ * CreateVector
+ */
+template<class F>
+ZenMatrix<F, 3, 1> CreateVector(F x, F y, F z)
+{
+  ZenMatrix<F, 3, 1> retval;
+  retval(0, 0) = x;
+  retval(1, 0) = y;
+  retval(2, 0) = z;
+  return retval;
+}
+
 template<class F, int R, int C>
 std::ostream& operator<<(std::ostream& out, const ZenMatrix<F, R, C>& matrix)
 {

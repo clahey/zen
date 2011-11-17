@@ -11,7 +11,7 @@
 using namespace std;
 
 const int STEP_RATE = 100000;
-const int SLOWDOWN = 100;
+const int SLOWDOWN = 1;
 const int LENGTH = 60;
 const int FRAME_RATE = 30;
 
